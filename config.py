@@ -11,9 +11,9 @@ MONGO_URL = env(
     "mongodb+srv://anmol:gII62eQDVpFw1SlZ@cluster0.k30u3uc.mongodb.net/?appName=Cluster0"
 )
 
-BOT_TOKEN = env("BOT_TOKEN", "7622424011:AAF1dLqN3uai2jG5jJH1EuwA4UoewCTBELI")
+BOT_TOKEN = env("BOT_TOKEN", "8467280293:AAGNiwcFcR8zPC2TWnDpignN6uS4PXHymYo")
 
-OWNER_IDS = [8064273320, 8364016757]
+OWNER_ID = [7113972959]
 
 STRING_SESSION = env(
     "STRING_SESSION",
