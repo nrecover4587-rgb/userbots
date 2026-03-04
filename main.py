@@ -100,7 +100,7 @@ async def start_cmd(e):
 
     buttons = [
         [
-            Button.url("👨‍💻 Developer", "https://t.me/Mrmental001")
+            Button.url("👨‍💻 Developer", "https://t.me/Mrmental001"),
             Button.url("📞 Support", "https://t.me/mentalchatting")
         ],
         [
