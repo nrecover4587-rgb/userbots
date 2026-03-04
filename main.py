@@ -89,12 +89,7 @@ async def start_cmd(e):
 💾 Mongo Database Connected  
 🟢 Active Sessions: {len(user_clients)}
 
-━━━━━━━━━━━━━━━━━━
-👨‍💻 Developer: @Mrmental001
-📞 Support: @mentalchatting
-📢 Updates: @codexempire
-
-━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━ 
 💎 Premium Automation • Fast • Secure
 """
 
