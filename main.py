@@ -1,5 +1,5 @@
 import asyncio
-from telethon import TelegramClient, events
+from telethon import TelegramClient, events, Button
 from telethon.sessions import StringSession
 from telethon.errors import FloodWaitError
 from pymongo import MongoClient
@@ -16,6 +16,8 @@ texts_col = db["texts"]
 bot = TelegramClient("controller_bot", API_ID, API_HASH)
 user_clients = []
 
+# ---------------- TEXT DATABASE ---------------- #
+
 def get_texts():
     doc = texts_col.find_one({"_id": "global"})
     return doc["texts"] if doc and "texts" in doc else []
@@ -26,6 +28,8 @@ def save_texts(texts):
         {"$set": {"texts": texts}},
         upsert=True
     )
+
+# ---------------- USER SESSION SYSTEM ---------------- #
 
 async def start_user_session(session_string):
     for c in user_clients:
@@ -58,6 +62,8 @@ async def start_user_session(session_string):
             except Exception:
                 break
 
+# ---------------- STARTUP ---------------- #
+
 async def startup():
     for s in sessions_col.find():
         try:
@@ -66,9 +72,41 @@ async def startup():
             pass
     print(f"🚀 Loaded {len(user_clients)} sessions")
 
-@bot.on(events.NewMessage(from_users=OWNER_IDS, pattern=r"^/start$"))
+# ---------------- START MESSAGE ---------------- #
+
+@bot.on(events.NewMessage(pattern=r"^/start$"))
 async def start_cmd(e):
-    await e.reply("🤖 Controller online")
+    start_text = """
+🤖 **PYRO CONTROLLER SYSTEM**
+
+━━━━━━━━━━━━━━━━━━
+⚡ Advanced Userbot Controller  
+🚀 Multi Session Support  
+💾 Mongo Database Connected  
+🟢 24/7 Running System  
+
+👨‍💻 Developer: @Mrmental001 
+📢 Updates: @codeexempire 
+
+━━━━━━━━━━━━━━━━━━
+💎 Premium Automation • Fast • Secure
+"""
+
+    buttons = [
+        [Button.url("📢 Updates Channel", "https://t.me/codexempire")],
+        [Button.inline("📊 Active Sessions", b"sessions")]
+    ]
+
+    await e.reply(start_text, buttons=buttons)
+
+# ---------------- CALLBACK BUTTON ---------------- #
+
+@bot.on(events.CallbackQuery(data=b"sessions"))
+async def show_sessions(event):
+    await event.answer()
+    await event.edit(f"🟢 Active Sessions: {len(user_clients)}")
+
+# ---------------- OWNER COMMANDS ---------------- #
 
 @bot.on(events.NewMessage(from_users=OWNER_IDS, pattern=r"^/addsession$"))
 async def addsession(e):
@@ -133,6 +171,8 @@ async def remove_text(e):
 async def clear_texts(e):
     save_texts([])
     await e.reply("🧹 All texts cleared")
+
+# ---------------- MAIN ---------------- #
 
 async def main():
     await bot.start(bot_token=BOT_TOKEN)
