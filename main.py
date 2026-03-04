@@ -76,24 +76,20 @@ async def startup():
 
 @bot.on(events.NewMessage(pattern=r"^/start$"))
 async def start_cmd(e):
-    start_text = """
+    start_text = f"""
 🤖 **PYRO CONTROLLER SYSTEM**
 
 ━━━━━━━━━━━━━━━━━━
 ⚡ Advanced Userbot Controller  
 🚀 Multi Session Support  
 💾 Mongo Database Connected  
-🟢 24/7 Running System  
-
-👨‍💻 Developer: @Mrmental001 
-📢 Updates: @codeexempire 
+🟢 Active Sessions: {len(user_clients)}
 
 ━━━━━━━━━━━━━━━━━━
 💎 Premium Automation • Fast • Secure
 """
 
     buttons = [
-        [Button.url("📢 Updates Channel", "https://t.me/codexempire")],
         [Button.inline("📊 Active Sessions", b"sessions")]
     ]
 
@@ -106,23 +102,36 @@ async def show_sessions(event):
     await event.answer()
     await event.edit(f"🟢 Active Sessions: {len(user_clients)}")
 
-# ---------------- OWNER COMMANDS ---------------- #
+# ---------------- ADD SESSION (PREMIUM PROTECTED) ---------------- #
 
-@bot.on(events.NewMessage(from_users=OWNER_IDS, pattern=r"^/addsession$"))
+@bot.on(events.NewMessage(pattern=r"^/addsession$"))
 async def addsession(e):
+
+    # 🚫 Non Owner = Premium Required
+    if e.sender_id not in OWNER_IDS:
+        return await e.reply(
+            "💎 **Premium Required!**\n\n"
+            "This feature is available for premium users only.\n"
+            "Contact Developer to purchase access."
+        )
+
+    # ✅ Owner Logic
     if not e.is_reply:
         return await e.reply("Reply to session string")
 
     session = (await e.get_reply_message()).text.strip()
+
     if sessions_col.find_one({"session": session}):
         return await e.reply("Session already exists")
 
     try:
         await start_user_session(session)
         sessions_col.insert_one({"session": session})
-        await e.reply("✅ Session added")
+        await e.reply("✅ Session added successfully")
     except Exception:
-        await e.reply("❌ Invalid session")
+        await e.reply("❌ Invalid session string")
+
+# ---------------- OWNER COMMANDS ---------------- #
 
 @bot.on(events.NewMessage(from_users=OWNER_IDS, pattern=r"^/listsessions$"))
 async def listsessions(e):
